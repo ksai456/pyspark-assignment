@@ -1,0 +1,8 @@
+pandas
+psycopg2
+sqlalchemy
+pyspark
+ipykernel
+pyhive
+thrift
+thrift_sasl

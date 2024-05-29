@@ -1,10 +1,31 @@
-version: '3.8'
-
+version: '3'
 services:
-  postgres:
-    image: postgres:latest
-    container_name: postgres
+  db:
+    image: postgres
     environment:
-      - POSTGRES_USER=username
-      - POSTGRES_PASSWORD=password
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: database
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./user_click_data.json:/docker-entrypoint-initdb.d/user_click_data.json
+    ports:
+      - "5432:5432"
 
+  hive:
+    image: apache/hive:4.0.0
+    environment:
+      SERVICE_NAME: hiveserver2
+    ports:
+      - 10000:10000
+      - 10002:10002
+    command: hiveserver2
+
+  pyspark:
+    image: pyspark
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    depends_on:
+      - db
+      - hive
